@@ -12,7 +12,7 @@ RUN python3.8 -m pip install -U wheel mock pillow
 RUN python3.8 -m pip install scikit-build
 RUN python3.8 -m pip install cython
 # download PyTorch 1.8.1 with all its libraries
-RUN git clone -b v1.8.1 --depth 1 --recursive https://github.com/pytorch/pytorch.git
+RUN git clone -b lts/release/1.8 --depth 1 --recursive --recurse-submodules --shallow-submodules https://github.com/pytorch/pytorch.git
 WORKDIR pytorch
 RUN python3.8 -m pip install -r requirements.txt
 COPY pytorch-1.8-jetson.patch .

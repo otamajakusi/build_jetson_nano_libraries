@@ -7,7 +7,7 @@ if [ ! -f /etc/nv_tegra_release ]; then
 fi
 if [[ $(cat /etc/nv_tegra_release) =~ ^.*REVISION:[^\S]([0-9]*\.[0-9]).*$ ]]; then
     case ${BASH_REMATCH[1]} in
-        5.*) sudo docker build -t pytorch-build . ;;
+        [56].*) sudo docker build -t pytorch-build . $1 ;;
         * ) echo "Error: unsupported jetpack ${BASH_REMATCH[1]}"
             exit 1 ;;
     esac

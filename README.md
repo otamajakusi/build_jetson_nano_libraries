@@ -4,10 +4,14 @@ This repository is for building python3.8 pytorch wheel package on Nvidia Jetson
 
 # Build
 
-Make sure this takes 8 or more hours.
+Make sure this takes more than 13 hours.
 
 ```
-./build.sh
+time ./build.sh
+...
+real    792m57.901s
+user    0m6.268s
+sys     0m2.176s
 ```
 
 After running the script, `torch-1.8.0*-cp38-cp38-linux_aarch64.whl` is generated on this directory.

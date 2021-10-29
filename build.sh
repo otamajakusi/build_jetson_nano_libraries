@@ -13,7 +13,7 @@ if [[ $(cat /etc/nv_tegra_release) =~ ^.*REVISION:[^\S]([0-9]*\.[0-9]).*$ ]]; th
     esac
 fi
 
-id=$(docker create pytorch-build)
-wheel=$(docker exec -it c757bc9c4c15 ls /pytorch/dist)
+id=$(docker run -it --rm -d pytorch-build bash)
+wheel=$(docker exec -it ${id} ls /pytorch/dist | sed -e "s/[\r\n]\+//g")
 docker cp ${id}:/pytorch/dist/${wheel} .
-docker rm ${id}
+docker stop ${id}

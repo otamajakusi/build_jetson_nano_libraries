@@ -1,4 +1,4 @@
-FROM nvcr.io/nvidia/l4t-pytorch:r32.5.0-pth1.6-py3 AS pytorch-builder
+FROM nvcr.io/nvidia/l4t-base:r32.5.0
 ENV DEBIAN_FRONTEND=noninteractive
 
 # https://qengineering.eu/install-pytorch-on-jetson-nano.html
@@ -7,10 +7,11 @@ RUN apt-get install -y python3.8 python3.8-dev
 RUN apt-get install -y ninja-build git cmake clang
 RUN apt-get install -y libopenmpi-dev libomp-dev ccache
 RUN apt-get install -y libopenblas-dev libblas-dev libeigen3-dev
+RUN apt-get install -y python3-pip libjpeg-dev
 RUN python3.8 -m pip install -U setuptools
 RUN python3.8 -m pip install -U wheel mock pillow
 RUN python3.8 -m pip install scikit-build
-RUN python3.8 -m pip install cython
+RUN python3.8 -m pip install cython Pillow
 # download PyTorch 1.8.1 with all its libraries
 RUN git clone -b lts/release/1.8 --depth 1 --recursive --recurse-submodules --shallow-submodules https://github.com/pytorch/pytorch.git
 WORKDIR pytorch

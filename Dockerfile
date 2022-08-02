@@ -1,23 +1,36 @@
-FROM nvcr.io/nvidia/l4t-base:r32.5.0
+FROM nvcr.io/nvidia/l4t-base:r32.7.1
 ENV DEBIAN_FRONTEND=noninteractive
 
 # https://qengineering.eu/install-pytorch-on-jetson-nano.html
-RUN apt-get update
-RUN apt-get install -y python3.8 python3.8-dev
-RUN apt-get install -y ninja-build git cmake clang
-RUN apt-get install -y libopenmpi-dev libomp-dev ccache
-RUN apt-get install -y libopenblas-dev libblas-dev libeigen3-dev
-RUN apt-get install -y python3-pip libjpeg-dev
+RUN apt-get update && apt-get install -y \
+      python3.8 python3.8-dev \
+      ninja-build git cmake clang \
+      libopenmpi-dev libomp-dev ccache \
+      libopenblas-dev libblas-dev libeigen3-dev \
+      python3-pip libjpeg-dev \
+      gnupg2 curl
+
+RUN apt-key adv --fetch-key http://repo.download.nvidia.com/jetson/jetson-ota-public.asc
+RUN echo 'deb https://repo.download.nvidia.com/jetson/common r32.5 main\n\
+deb https://repo.download.nvidia.com/jetson/t210 r32.5 main' > /etc/apt/sources.list.d/nvidia-l4t-apt-source.list
+
+RUN apt-get update && apt-get install -y cuda-toolkit-10-2
+RUN python3.8 -m pip install -U pip
 RUN python3.8 -m pip install -U setuptools
 RUN python3.8 -m pip install -U wheel mock pillow
 RUN python3.8 -m pip install scikit-build
 RUN python3.8 -m pip install cython Pillow
-# download PyTorch 1.8.1 with all its libraries
-RUN git clone -b lts/release/1.8 --depth 1 --recursive --recurse-submodules --shallow-submodules https://github.com/pytorch/pytorch.git
+## download PyTorch v1.11.0 with all its libraries
+RUN git clone -b v1.11.0 --depth 1 --recursive --recurse-submodules --shallow-submodules https://github.com/pytorch/pytorch.git
 WORKDIR pytorch
 RUN python3.8 -m pip install -r requirements.txt
-COPY pytorch-1.8-jetson.patch .
-RUN patch -p1 < pytorch-1.8-jetson.patch
+COPY pytorch-1.11-jetson.patch .
+RUN patch -p1 < pytorch-1.11-jetson.patch
+
+RUN apt-get install -y software-properties-common lsb-release
+RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
+RUN apt-add-repository "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
+RUN apt-get update && apt-get install -y cmake
 
 ENV BUILD_CAFFE2_OPS=OFF
 ENV USE_FBGEMM=OFF
@@ -34,7 +47,7 @@ ENV TORCH_CUDA_ARCH_LIST="5.3;6.2;7.2"
 ENV USE_NCCL=OFF
 ENV USE_SYSTEM_NCCL=OFF
 ENV USE_OPENCV=OFF
-ENV MAX_JOBS=2
+#ENV MAX_JOBS=2
 # set path to ccache
 ENV PATH=/usr/lib/ccache:$PATH
 # set clang compiler

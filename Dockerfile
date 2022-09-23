@@ -11,8 +11,8 @@ RUN apt-get update && apt-get install -y \
       gnupg2 curl
 
 RUN apt-key adv --fetch-key http://repo.download.nvidia.com/jetson/jetson-ota-public.asc
-RUN echo 'deb https://repo.download.nvidia.com/jetson/common r32.5 main\n\
-deb https://repo.download.nvidia.com/jetson/t210 r32.5 main' > /etc/apt/sources.list.d/nvidia-l4t-apt-source.list
+RUN echo 'deb https://repo.download.nvidia.com/jetson/common r32.7 main\n\
+deb https://repo.download.nvidia.com/jetson/t210 r32.7 main' > /etc/apt/sources.list.d/nvidia-l4t-apt-source.list
 
 RUN apt-get update && apt-get install -y cuda-toolkit-10-2
 RUN python3.8 -m pip install -U pip
@@ -47,7 +47,7 @@ ENV TORCH_CUDA_ARCH_LIST="5.3;6.2;7.2"
 ENV USE_NCCL=OFF
 ENV USE_SYSTEM_NCCL=OFF
 ENV USE_OPENCV=OFF
-#ENV MAX_JOBS=2
+ENV MAX_JOBS=2
 # set path to ccache
 ENV PATH=/usr/lib/ccache:$PATH
 # set clang compiler
@@ -57,3 +57,10 @@ ENV CXX=clang++
 # ln -s /usr/lib/aarch64-linux-gnu/libcublas.so /usr/local/cuda/lib64/libcublas.so
 # start the build
 RUN python3.8 setup.py bdist_wheel
+
+# torch vision
+RUN git clone --depth=1 https://github.com/pytorch/vision torchvision -b v0.12.0
+RUN cd torchvision && \
+  export TORCH_CUDA_ARCH_LIST='5.3;6.2;7.2' \
+  export FORCE_CUDA=1 \
+  python3.8 setup.py install && setup.py bdist_wheel

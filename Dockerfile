@@ -1,5 +1,6 @@
 FROM nvcr.io/nvidia/l4t-base:r32.7.1
 ENV DEBIAN_FRONTEND=noninteractive
+ARG MAX_JOBS=2
 
 # https://qengineering.eu/install-pytorch-on-jetson-nano.html
 RUN apt-get update && apt-get install -y \
@@ -14,7 +15,7 @@ RUN apt-key adv --fetch-key http://repo.download.nvidia.com/jetson/jetson-ota-pu
 RUN echo 'deb https://repo.download.nvidia.com/jetson/common r32.7 main\n\
 deb https://repo.download.nvidia.com/jetson/t210 r32.7 main' > /etc/apt/sources.list.d/nvidia-l4t-apt-source.list
 
-RUN apt-get update && apt-get install -y cuda-toolkit-10-2
+RUN apt-get update && apt-get install -y nvidia-cuda nvidia-cudnn8
 RUN python3.8 -m pip install -U pip
 RUN python3.8 -m pip install -U setuptools
 RUN python3.8 -m pip install -U wheel mock pillow
@@ -47,7 +48,7 @@ ENV TORCH_CUDA_ARCH_LIST="5.3;6.2;7.2"
 ENV USE_NCCL=OFF
 ENV USE_SYSTEM_NCCL=OFF
 ENV USE_OPENCV=OFF
-ENV MAX_JOBS=2
+ENV MAX_JOBS=$MAX_JOBS
 # set path to ccache
 ENV PATH=/usr/lib/ccache:$PATH
 # set clang compiler

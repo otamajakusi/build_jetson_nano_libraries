@@ -58,10 +58,11 @@ ENV CXX=clang++
 # ln -s /usr/lib/aarch64-linux-gnu/libcublas.so /usr/local/cuda/lib64/libcublas.so
 # start the build
 RUN python3.8 setup.py bdist_wheel
+RUN find /pytorch/dist/ -type f|xargs python3.8 -m pip install
 
 # torch vision
 RUN git clone --depth=1 https://github.com/pytorch/vision torchvision -b v0.12.0
 RUN cd torchvision && \
-  export TORCH_CUDA_ARCH_LIST='5.3;6.2;7.2' \
-  export FORCE_CUDA=1 \
-  python3.8 setup.py install && setup.py bdist_wheel
+  TORCH_CUDA_ARCH_LIST='5.3;6.2;7.2' \
+  FORCE_CUDA=1 \
+  python3.8 setup.py bdist_wheel

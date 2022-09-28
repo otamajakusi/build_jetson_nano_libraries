@@ -50,9 +50,9 @@ if [ -e .phase ] && [ $(cat .phase) -lt 5 ]; then
 ## download PyTorch v1.11.0 with all its libraries
 git clone -b v1.11.0 --depth 1 --recursive --recurse-submodules --shallow-submodules https://github.com/pytorch/pytorch.git
 (
-cd pytorch
-python3.8 -m pip install -r requirements.txt
-patch -p1 < ../pytorch-1.11-jetson.patch
+  cd pytorch
+  python3.8 -m pip install -r requirements.txt
+  patch -p1 < ../pytorch-1.11-jetson.patch
 )
 echo -n 5 > .phase
 fi
@@ -84,8 +84,8 @@ export CXX=clang++
 # ln -s /usr/lib/aarch64-linux-gnu/libcublas.so /usr/local/cuda/lib64/libcublas.so
 # start the build
 (
-cd pytorch
-python3.8 setup.py bdist_wheel
+  cd pytorch
+  python3.8 setup.py bdist_wheel
 )
 echo -n 6 > .phase
 fi
@@ -95,10 +95,10 @@ if [ -e .phase ] && [ $(cat .phase) -lt 7 ]; then
 # torch vision
 git clone --depth=1 https://github.com/pytorch/vision torchvision -b v0.12.0
 (
-cd torchvision && \
-  export TORCH_CUDA_ARCH_LIST='5.3;6.2;7.2' \
-  export FORCE_CUDA=1 \
-  python3.8 setup.py install && setup.py bdist_wheel
+  cd torchvision && \
+    export TORCH_CUDA_ARCH_LIST='5.3;6.2;7.2' \
+    export FORCE_CUDA=1 \
+    python3.8 setup.py install && setup.py bdist_wheel
 )
 echo -n 7 > .phase
 fi

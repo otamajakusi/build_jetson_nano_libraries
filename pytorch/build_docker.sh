@@ -1,18 +1,13 @@
 #!/bin/bash
-set -e
+set -eu
 
-if [ ! -f /etc/nv_tegra_release ]; then
-    echo "Error: $0 should be run on the Jetson platform."
-    exit 1
+if [ $# -eq 0 ]; then
+  MAX_JOBS=2
+else
+  MAX_JOBS=$1
 fi
-if [[ $(cat /etc/nv_tegra_release) =~ ^.*REVISION:[^\S]([0-9]*\.[0-9]).*$ ]]; then
-    case ${BASH_REMATCH[1]} in
-        [56].*) sudo docker build -t pytorch-build . $1 ;;
-        * ) echo "Error: unsupported jetpack ${BASH_REMATCH[1]}"
-            exit 1 ;;
-    esac
-fi
-
+echo MAX_JOBS=${MAX_JOBS}
+docker build -t pytorch-build . --build-arg MAX_JOBS=${MAX_JOBS}
 id=$(docker run -it --rm -d pytorch-build bash)
 pytorch=$(docker exec -it ${id} find /pytorch/dist -type f | sed -e "s/[\r\n]\+//g")
 vision=$(docker exec -it ${id} find /pytorch/torchvision/dist -type f | sed -e "s/[\r\n]\+//g")

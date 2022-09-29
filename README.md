@@ -1,6 +1,6 @@
 # This repository
 
-Tsis repository is for building Jetson Nano libraries for python3.8.
+This repository is for building Jetson Nano libraries for python3.8.
 
 The following libraries can be supported:
 

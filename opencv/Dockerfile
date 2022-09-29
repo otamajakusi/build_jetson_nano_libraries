@@ -3,6 +3,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 ARG VER="4.6.0"
 ARG PREFIX=/usr/local
+ARG MAX_JOBS
 
 #    setup
 RUN cd tmp && mkdir build_opencv
@@ -103,7 +104,9 @@ RUN cd opencv && \
         -D PYTHON3_PACKAGES_PATH=$(python3.8 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") \
         -D PYTHON3_LIBRARY=/usr/lib/aarch64-linux-gnu/libpython3.8.so \
         -D CPACK_BINARY_DEB=ON \
+        -D CPACK_PACKAGING_INSTALL_PREFIX=${PREFIX} \
         ..
-RUN cd opencv/build && make -j$(nproc)
-
-RUN tar zcf /opencv-${VER}-py38.tgz .
+WORKDIR /tmp/build_opencv/opencv/build
+RUN make -j${MAX_JOBS}
+RUN make install
+RUN cpack -G DEB

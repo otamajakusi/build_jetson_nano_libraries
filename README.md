@@ -12,7 +12,7 @@ The following libraries can be supported:
 There are two types of build script. One is a native bash script, the other is
 dockerfile build script. The native bash script can be run on the Jetson Nano.
 The dockerfile build script can be run on the Jetson Nano and also can be run
-on the host pc. Before running dockerfile on the host pc, qemu-user-static
+on the host PC. Before running dockerfile on the host PC, qemu-user-static
 libray should be installed.
 
 # script layout
@@ -24,9 +24,9 @@ libray should be installed.
 │    ├── build_docker.sh
 │    └── Dockerfile
 └── opencv
-   ├── build_native.sh
-   ├── build_docker.sh
-   └── Dockerfile
+     ├── build_native.sh
+     ├── build_docker.sh
+     └── Dockerfile
 ```
 
 # Performance
